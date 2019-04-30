@@ -44,4 +44,107 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Timer/.
+    let deadLine = '2019-05-03'; //наш дэдлайн, по какое время
+    
+    // функция получает все данные о времени
+    function getTimeRemaining(endtime) { // передаем внутрь наш дедлайн
+        //Date.parse() превращает любую дату в количество милисекунд с 1970г
+        //new Date() дата которая сейчас, в данный момент, когда пользователь зашел на сайт
+        let t = Date.parse(endtime) - Date.parse(new Date());
+        
+        if (t > 0) {
+            //сюда помещаем разницу между датами в милисек.
+            // с помощью Math.floor() получаем только целые числа;
+            // (t/1000)%60 вычленяем количество минут и берем остаток - секунды
+            let seconds = Math.floor((t/1000) % 60),
+            minutes = Math.floor((t/1000/60) % 60),// t/1000/60)%60 вычленяем количество часов и берем остаток - минуты
+            hours = Math.floor((t / (1000*60*60)));
+            // hours = Math.floor((t/1000/60/60) % 24);
+            // days =  Math.floor(t / (1000*60*60*24));
+
+            return { // создаем объект и возвращаем его обратно в updateClock
+                'total' : t, // кол-во милисек. разница
+                'hours' : hours,
+                'minutes' : minutes,
+                'seconds' : seconds
+            };
+        } else {
+            return { 
+                'total' : '0', // 
+                'hours' : '0',
+                'minutes' : '0',
+                'seconds' : '0'
+            }; 
+        }
+        
+        
+        
+    }
+
+    // функция превращает статическую верстку в динамическую, чтобы вставлять все эти значения в верстку
+    // устанавливает наши часы
+    //id - находим элемент где будем устанавливать
+    //endtime - дедлайн который мы будем устанавливать
+    function setClock(id, endtime) { //id - находим элемент где будем устанавливать по id элемента 
+        // создаем переменные беря элементы со страницы
+        let timer = document.getElementById(id),
+            hours = timer.querySelector('.hours'),
+            minutes = timer.querySelector('.minutes'),
+            seconds = timer.querySelector('.seconds'),
+            timeInterval = setInterval(updateClock, 1000);// интервал, каждую секунду запуск функции updateClock
+
+        // функция которая будет обновлять наши часы каждую секунду
+        //получает разницу между временем
+        function updateClock() {
+            let t = getTimeRemaining(endtime); // передаем дедлайн endtime
+
+            function finalDateFunc() { //подставлять 0 перед значениями, которые состоят из одной цифры
+                let finalDateFunc = {};
+                for (let i in t) {
+                    finalDateFunc[i] = ( (parseInt(t[i]) < 10 ) ? ('0'+t[i]) : (t[i]) );
+                }
+                return finalDateFunc;
+            }
+            let finalDate = finalDateFunc();
+
+            // из полученных данных мы записываем эти данные прямо в верстку:
+            hours.textContent = finalDate.hours;
+            minutes.textContent = finalDate.minutes;
+            seconds.textContent = finalDate.seconds;
+
+            if (finalDate.total <= 0) { //как только разница дойдет до нуля
+                clearInterval(timeInterval); //остановим интервал таймер
+            }
+        }
+    }
+    setClock('timer', deadLine);
+
+  ////////////////////////////////////////////////////////////////////////////
+
+
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
