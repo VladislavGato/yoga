@@ -144,7 +144,8 @@ window.addEventListener('DOMContentLoaded', function() {
     let more = document.querySelector('.more'), // кнопка на которую будем кликать
         overlay = document.querySelector('.overlay'), // наше модальное окно
         close = document.querySelector('.popup-close'), // крестик чтобы закрыть
-        content = document.querySelector('.content'); 
+        content = document.querySelector('.content');
+    let body = document.querySelector('body');
 
     // на кнопку more навешиваем обработчик событий click
     // при клике наш overlay должен менять свои стили и он применяет блочную модель
@@ -165,36 +166,40 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
     //Привязать модальное окно к кнопкам “Узнать подробнее” в табах. Код не должен дублироваться.
-    content.addEventListener('click', function(event) {
+    // content.addEventListener('click', function(event) {
+    //     let target = event.target;
+    //     if ( (target && target.classList.contains('description-btn')) || 
+    //         (target && target.classList.contains('more')) ) { //если то куда нажали имеет класс Х, то
+
+    //         overlay.style.display = 'block';
+    //         this.classList.add('more-splash'); // добавляем в more новый класс
+    //         document.body.style.overflow = 'hidden';      
+    //         // console.log('Модальное окно работает');
+    //     }
+    // });
+
+    // close.addEventListener('click', function() {
+    //     overlay.style.display = 'none'; // стили меняем с блока на none 
+    //     more.classList.remove('more-splash'); //убираем класс из more
+    //     document.body.style.overflow = '';
+    // });
+
+
+    body.addEventListener('click', function(event) {
         let target = event.target;
         if ( (target && target.classList.contains('description-btn')) || 
             (target && target.classList.contains('more')) ) { //если то куда нажали имеет класс Х, то
 
             overlay.style.display = 'block';
             this.classList.add('more-splash'); // добавляем в more новый класс
-            document.body.style.overflow = 'hidden';
-      
+            document.body.style.overflow = 'hidden';      
             // console.log('Модальное окно работает');
+        } else if (target && target.classList.contains('popup-close')) {
+            overlay.style.display = 'none'; // стили меняем с блока на none 
+            more.classList.remove('more-splash'); //убираем класс из more
+            document.body.style.overflow = '';
         }
     });
-
-    close.addEventListener('click', function() {
-        overlay.style.display = 'none'; // стили меняем с блока на none 
-        more.classList.remove('more-splash'); //убираем класс из more
-        document.body.style.overflow = '';
-    });
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
