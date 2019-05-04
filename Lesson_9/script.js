@@ -4,5 +4,5 @@ function showUser(surname, name) {
     
     alert("Пользователь " + surname + " " + name + ", его возраст " + age.value);
 } 
-showUser();
+showUser('Пупкин', 'Мафусаил');
 
