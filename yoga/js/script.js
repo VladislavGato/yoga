@@ -45,7 +45,7 @@ window.addEventListener('DOMContentLoaded', function() {
     });
   
     // Timer/.
-    let deadLine = '2019-05-03'; //наш дэдлайн, по какое время
+    let deadLine = '2019-06-03'; //наш дэдлайн, по какое время
     
     // функция получает все данные о времени
     function getTimeRemaining(endtime) { // передаем внутрь наш дедлайн
@@ -121,6 +121,7 @@ window.addEventListener('DOMContentLoaded', function() {
     setClock('timer', deadLine);
 
     ////////////////////////////////////////////////////////////////////////////
+    // плавная анимация
     // достаем все якоря 
     let anchors = document.querySelectorAll('a[href*="#"]');
 
@@ -136,5 +137,65 @@ window.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+    //////////////////////////////////////////////////////////////////////////////
+    
+    // Modal ( наше модальное окно)
+
+    let more = document.querySelector('.more'), // кнопка на которую будем кликать
+        overlay = document.querySelector('.overlay'), // наше модальное окно
+        close = document.querySelector('.popup-close'), // крестик чтобы закрыть
+        content = document.querySelector('.content'); 
+
+    // на кнопку more навешиваем обработчик событий click
+    // при клике наш overlay должен менять свои стили и он применяет блочную модель
+    // при клике на кнопку будет воспроизводится анимация которая будет применена для этой кнопки
+    // при клике на кнопку установим CSS правило для document
+    //      мы запретим прокрутку страницы как только у нас откроется модальное окно
+    // more.addEventListener('click', function() {
+    //     overlay.style.display = 'block';
+    //     this.classList.add('more-splash'); // добавляем в more новый класс
+    //     document.body.style.overflow = 'hidden';
+    // });
+    // // клик на крестик
+    // close.addEventListener('click', function() {
+    //     overlay.style.display = 'none'; // стили меняем с блока на none 
+    //     more.classList.remove('more-splash'); //убираем класс из more
+    //     document.body.style.overflow = '';
+    // });
+
+
+    //Привязать модальное окно к кнопкам “Узнать подробнее” в табах. Код не должен дублироваться.
+    content.addEventListener('click', function(event) {
+        let target = event.target;
+        if ( (target && target.classList.contains('description-btn')) || 
+            (target && target.classList.contains('more')) ) { //если то куда нажали имеет класс Х, то
+
+            overlay.style.display = 'block';
+            this.classList.add('more-splash'); // добавляем в more новый класс
+            document.body.style.overflow = 'hidden';
+      
+            // console.log('Модальное окно работает');
+        }
+    });
+
+    close.addEventListener('click', function() {
+        overlay.style.display = 'none'; // стили меняем с блока на none 
+        more.classList.remove('more-splash'); //убираем класс из more
+        document.body.style.overflow = '';
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 });
