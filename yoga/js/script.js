@@ -43,7 +43,7 @@ window.addEventListener('DOMContentLoaded', function() {
             } 
         }
     });
-
+  
     // Timer/.
     let deadLine = '2019-05-03'; //наш дэдлайн, по какое время
     
@@ -62,7 +62,7 @@ window.addEventListener('DOMContentLoaded', function() {
             hours = Math.floor((t / (1000*60*60)));
             // hours = Math.floor((t/1000/60/60) % 24);
             // days =  Math.floor(t / (1000*60*60*24));
-
+					
             return { // создаем объект и возвращаем его обратно в updateClock
                 'total' : t, // кол-во милисек. разница
                 'hours' : hours,
@@ -120,31 +120,21 @@ window.addEventListener('DOMContentLoaded', function() {
     }
     setClock('timer', deadLine);
 
-  ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    // достаем все якоря 
+    let anchors = document.querySelectorAll('a[href*="#"]');
 
-
+    for (let anchor of anchors) {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+        
+            let blockID = anchor.getAttribute('href');
+        
+            document.querySelector('' + blockID).scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    }
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
