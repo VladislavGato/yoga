@@ -146,7 +146,6 @@ window.addEventListener('DOMContentLoaded', function() {
         close = document.querySelector('.popup-close'), // крестик чтобы закрыть
         content = document.querySelector('.content');
     let body = document.querySelector('body');
-
     // на кнопку more навешиваем обработчик событий click
     // при клике наш overlay должен менять свои стили и он применяет блочную модель
     // при клике на кнопку будет воспроизводится анимация которая будет применена для этой кнопки
@@ -154,16 +153,15 @@ window.addEventListener('DOMContentLoaded', function() {
     //      мы запретим прокрутку страницы как только у нас откроется модальное окно
     // more.addEventListener('click', function() {
     //     overlay.style.display = 'block';
-    //     this.classList.add('more-splash'); // добавляем в more новый класс
-    //     document.body.style.overflow = 'hidden';
+    //     this.classList.add('more-splash'); // добавляем в more новый класс для анимации
+    //     document.body.style.overflow = 'hidden';// запретим прокрутку страницы при открытии модального окна
     // });
     // // клик на крестик
     // close.addEventListener('click', function() {
     //     overlay.style.display = 'none'; // стили меняем с блока на none 
     //     more.classList.remove('more-splash'); //убираем класс из more
-    //     document.body.style.overflow = '';
+    //     document.body.style.overflow = ''; // снова можем двигать страницей
     // });
-
 
     //Привязать модальное окно к кнопкам “Узнать подробнее” в табах. Код не должен дублироваться.
     // content.addEventListener('click', function(event) {
@@ -177,29 +175,69 @@ window.addEventListener('DOMContentLoaded', function() {
     //         // console.log('Модальное окно работает');
     //     }
     // });
-
     // close.addEventListener('click', function() {
     //     overlay.style.display = 'none'; // стили меняем с блока на none 
     //     more.classList.remove('more-splash'); //убираем класс из more
     //     document.body.style.overflow = '';
     // });
 
+    // body.addEventListener('click', function(event) {
+    //     let target = event.target;
+    //     if ( (target.classList.contains('description-btn')) || 
+    //         (target.classList.contains('more')) ) { //если то куда нажали имеет класс Х, то
+    //         overlay.style.display = 'block';
+    //         this.classList.add('more-splash'); // добавляем в more новый класс для анимации
+    //         document.body.style.overflow = 'hidden';// запретим прокрутку страницы при открытии модального окна
+    //     }
+    //     if (target.classList.contains('popup-close')) {
+    //         overlay.style.display = 'none'; // стили меняем с блока на none 
+    //         more.classList.remove('more-splash'); //убираем класс анимации из more 
+    //         document.body.style.overflow = ''; // снова можем двигать страницей
+    //     }        
+    // });
 
-    body.addEventListener('click', function(event) {
-        let target = event.target;
-        if ( (target && target.classList.contains('description-btn')) || 
-            (target && target.classList.contains('more')) ) { //если то куда нажали имеет класс Х, то
+    //функция для всех кнопок УЗНАТЬ ПОДРОБНЕЕ в табах и для УЗНАТЬ БОЛЬШЕ
+    let bindModal = ( btn, overlayStatus, overflowStatus ) => {
+        overlay.style.display = overlayStatus; //стили для overlay (блока/none) 
+        btn.classList.add('more-splash');//добавляем в more новый класс для анимации
+        document.body.style.overflow = overflowStatus;//прокрутку страницы при открытии модального окна (hiden / '')
+        setTimeout(() => { // уберем из more класс для анимации через 1.5 сек
+            btn.classList.remove('more-splash');
+        }, 1500);
+    };
 
-            overlay.style.display = 'block';
-            this.classList.add('more-splash'); // добавляем в more новый класс
-            document.body.style.overflow = 'hidden';      
-            // console.log('Модальное окно работает');
-        } else if (target && target.classList.contains('popup-close')) {
-            overlay.style.display = 'none'; // стили меняем с блока на none 
-            more.classList.remove('more-splash'); //убираем класс из more
-            document.body.style.overflow = '';
-        }
+    //событие при клике
+    document.body.addEventListener('click', e => {
+        let target = e.target;
+
+        //если то на что кликнули имеет класс .more или .description-btn, то вызывается функция bindModal и передается в неё:
+        (target.classList.contains('more') || target.classList.contains('description-btn') ) ? bindModal(target, 'block', 'hidden') : '';
+        (target.classList.contains('popup-close')) ? bindModal(target, 'none', '') : '';
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
