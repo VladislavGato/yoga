@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', () => {
 
     'use strict'; // переведем весь наш код в строгий режим
 
@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', function() {
     };
 
     // делегирование события от родителя
-    info.addEventListener('click', function(event) {
+    info.addEventListener('click', (event) => {
         let target = event.target;
         if (target && target.classList.contains('info-header-tab')) { //если то куда нажали имеет класс Х, то
             for (let i = 0; i < tab.length; i++) { // перебираем все 
@@ -99,7 +99,7 @@ window.addEventListener('DOMContentLoaded', function() {
     let anchors = document.querySelectorAll('a[href*="#"]');
 
     for (let anchor of anchors) {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', (e) => {
             e.preventDefault();
         
             let blockID = anchor.getAttribute('href');
@@ -131,36 +131,11 @@ window.addEventListener('DOMContentLoaded', function() {
     };
 
     //событие при клике
-    document.body.addEventListener('click', e => {
+    document.body.addEventListener('click', (e) => {
         let target = e.target;
         (target.classList.contains('more') || target.classList.contains('description-btn')) ? bindModal(target, 'block', 'hidden') : '';
         (target.classList.contains('popup-close')) ? bindModal(target, 'none', '') : '';
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 });
