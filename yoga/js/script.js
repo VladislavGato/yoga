@@ -91,7 +91,7 @@ window.addEventListener('DOMContentLoaded', () => {
             },
             timeInterval = setInterval(updateClock, 1000);// интервал, каждую секунду запуск функции updateClock 
     };
-    setClock('timer', deadLine);
+    setClock('timer', deadLine );
 
     ////////////////////////////////////////////////////////////////////////
     // плавная анимация
@@ -110,7 +110,7 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    //////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     
     // Modal ( наше модальное окно)
 
@@ -136,6 +136,103 @@ window.addEventListener('DOMContentLoaded', () => {
         (target.classList.contains('more') || target.classList.contains('description-btn')) ? bindModal(target, 'block', 'hidden') : '';
         (target.classList.contains('popup-close')) ? bindModal(target, 'none', '') : '';
     });
+
+
+
+
+    /////////////////////////////////////////////////////////////////////////
+
+
+    
+    // FORM
+
+    // объект с сообщениями, с различными состояниями нашего запроса
+    let message = {
+        loading: 'Загрузка...', // будет показываться пользователю когда наш запрос ещё не обработался
+        success: 'Спасибо! Скоро мы с вами свяжемся!',
+        failure: 'Что-то пошло не так...' //если сервер не отвечает
+    };
+
+    //
+    let form = document.querySelector('.main-form'), // форма в модальном окне
+        contactsForm = document.querySelector('#form'), // контактная форма
+        input = form.getElementsByTagName('input'),  // все input'ы с этой формы
+        
+        // создадим новый div на странице
+        statusMessage = document.createElement('div');
+        // добавим к переменной класс
+        statusMessage.classList.add('status');
+    ///// запрос на сервер
+    // в любой форме для отправки данных необходимо чтобы был (button)  или  (input type=submit)
+
+
+    // событие формы
+    let sendForm = (form) => {
+        form.appendChild(statusMessage);
+
+        // сам запрос
+        let request = new XMLHttpRequest(); // запрос
+        request.open('POST', 'server.php'); // POST - для отправки введенных пользователем данных / URL нашего сервера
+
+        // настройка заголовков буфера HTTP/   данные полученные из формы
+        // заголовок запроса. обычный вариант
+        // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoder'); 
+
+        // заголовок запроса. вариант для JSON файлов , а не обычная форма
+        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        // получить данные которые ввел пользователь
+
+        // !!! для того чтобы правильно отправлять данные на сервер, необходимо чтобы в input'ах стояли 
+        //   обязательно параметры name, именно из этого атрибута name мы будем формировать ключ, а значение
+        //    уже введет пользователь
+
+        ////////// вариант для JSON
+        
+        let formData = new FormData(form); // помещаем сюда всё то что ответил пользователь (пара ключ: значение)
+        // создаем новый объект в который мы поместим все эти данные
+        
+        let obj = {}; // 
+        formData.forEach(function(value, key) { // берем все данные из formData и помещаем в obj
+            obj[key] = value;
+        });
+
+        // превращаем обычные JS объекты в JSON формат
+        let json = JSON.stringify(obj); // получаем переменную со всеми данными в формате JSON, его мы и отправляем на сервер
+
+        request.send(json); // отправляет запрос на сервер
+
+        // для того чтобы наблюдать за изменениями состояния нашего запроса
+        request.addEventListener('readystatechange', () => {
+            if (request.readyState < 4) { // наш запрос грузится если сервер будет долго отвечать 
+                statusMessage.innerHTML = message.loading; // 'Загрузка...' это если сервер немножко тупит
+            } else if (request.readyState == 4 && request.status == 200) { // если всё прошло успешно и сервер ответил 200-ым кодом и наш запрос уже в 4-ом состоянии
+                statusMessage.innerHTML = message.success; // 'Спасибо! Скоро мы с вами свяжемся!' 
+            } else {
+                statusMessage.innerHTML = message.failure; // ''Что-то пошло не так...'                 
+            }
+        });
+
+        // отправили в обычной варианте как его воспринимает PHP
+        // чтобы автоматически очищалось поле инпута
+        for (let i = 0; i < input.length; i++) {
+            input[i].value = ''; // возмем каждый инпут тот что есть в форме, у каждого инпута возмем value и превратим в пустую строку
+        }
+    };
+
+
+    // надо вешать НА ФОРМУ,  НЕ НА КНОПКУ.  Следим чтобы форма отправлялась
+    document.body.addEventListener('submit', (event) => {  // submit - всегда отправка  СРАБАТЫВАЕТ ТОЛЬКО НА ФОРМАХ
+        let target = event.target; // event. где произошло событие
+        event.preventDefault(); // чтобы не перезагружалась страница отменим стандартное поведение
+
+        sendForm(target);
+
+        // console.log(target);
+    });
+
+    ///////////////////////////////////////////
+    
+    ////// КОНТАКТНАЯ ФОРМА
 
 
 });
