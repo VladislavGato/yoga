@@ -139,12 +139,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-
     /////////////////////////////////////////////////////////////////////////
 
 
-    
-    // FORM
+    // // FORM с промисами
 
     // объект с сообщениями, с различными состояниями нашего запроса
     let message = {
@@ -154,10 +152,9 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     //
-    let form = document.querySelector('.main-form'), // форма в модальном окне
-        contactsForm = document.querySelector('#form'), // контактная форма
-        input = form.getElementsByTagName('input'),  // все input'ы с этой формы
-        
+    let form = document.getElementsByClassName('main-form')[0], // форма в модальном окне
+        formBottom = document.getElementById('form'), // контактная форма
+        input = document.getElementsByTagName('input'),  // все input'ы        
         // создадим новый div на странице
         statusMessage = document.createElement('div');
         // добавим к переменной класс
@@ -167,60 +164,65 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     // событие формы
-    let sendForm = (form) => {
-        form.appendChild(statusMessage);
+    let sendForm = (elem) => {
+        // elem.addEventListener('submit', function(e) { // для 1 варианта вызова
+            // e.preventDefault();  // для 1 варианта вызова
+            elem.appendChild(statusMessage);
+            let formData = new FormData(elem); // помещаем сюда всё то что ответил пользователь (пара ключ: значение)
+            // создаем новый объект в который мы поместим все эти данные
 
-        // сам запрос
-        let request = new XMLHttpRequest(); // запрос
-        request.open('POST', 'server.php'); // POST - для отправки введенных пользователем данных / URL нашего сервера
+            function postData(data) {
+                return new Promise(function(resolve, reject) {
+                    // сам запрос
+                    let request = new XMLHttpRequest(); // запрос
+                    request.open('POST', 'server.php'); // POST - для отправки введенных пользователем данных / URL нашего сервера
+                    // заголовок запроса. вариант для JSON файлов , а не обычная форма
+                    request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+                    // получить данные которые ввел пользователь
 
-        // настройка заголовков буфера HTTP/   данные полученные из формы
-        // заголовок запроса. обычный вариант
-        // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoder'); 
+                    // для того чтобы наблюдать за изменениями состояния нашего запроса
+                    request.addEventListener('readystatechange', () => {
+                        if (request.readyState < 4) { // наш запрос грузится если сервер будет долго отвечать 
+                            resolve(); // 'Загрузка...' это если сервер немножко тупит
+                        } else if (request.readyState == 4 && request.status == 200) { // если всё прошло успешно и сервер ответил 200-ым кодом и наш запрос уже в 4-ом состоянии
+                            resolve(); // 'Спасибо! Скоро мы с вами свяжемся!' 
+                        } else {
+                            reject(); // ''Что-то пошло не так...'                 
+                        }
+                    });
 
-        // заголовок запроса. вариант для JSON файлов , а не обычная форма
-        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-        // получить данные которые ввел пользователь
-
-        // !!! для того чтобы правильно отправлять данные на сервер, необходимо чтобы в input'ах стояли 
-        //   обязательно параметры name, именно из этого атрибута name мы будем формировать ключ, а значение
-        //    уже введет пользователь
-
-        ////////// вариант для JSON
-        
-        let formData = new FormData(form); // помещаем сюда всё то что ответил пользователь (пара ключ: значение)
-        // создаем новый объект в который мы поместим все эти данные
-        
-        let obj = {}; // 
-        formData.forEach(function(value, key) { // берем все данные из formData и помещаем в obj
-            obj[key] = value;
-        });
-
-        // превращаем обычные JS объекты в JSON формат
-        let json = JSON.stringify(obj); // получаем переменную со всеми данными в формате JSON, его мы и отправляем на сервер
-
-        request.send(json); // отправляет запрос на сервер
-
-        // для того чтобы наблюдать за изменениями состояния нашего запроса
-        request.addEventListener('readystatechange', () => {
-            if (request.readyState < 4) { // наш запрос грузится если сервер будет долго отвечать 
-                statusMessage.innerHTML = message.loading; // 'Загрузка...' это если сервер немножко тупит
-            } else if (request.readyState == 4 && request.status == 200) { // если всё прошло успешно и сервер ответил 200-ым кодом и наш запрос уже в 4-ом состоянии
-                statusMessage.innerHTML = message.success; // 'Спасибо! Скоро мы с вами свяжемся!' 
-            } else {
-                statusMessage.innerHTML = message.failure; // ''Что-то пошло не так...'                 
+                    ////////// вариант для JSON 
+                    let obj = {}; // 
+                    data.forEach(function(value, key) { // берем все данные из formData и помещаем в obj
+                        obj[key] = value;
+                    });
+                    // превращаем обычные JS объекты в JSON формат
+                    let json = JSON.stringify(obj); // получаем переменную со всеми данными в формате JSON, его мы и отправляем на сервер
+                    request.send(json); // отправляет запрос на сервер
+                })                
             }
-        });
 
-        // отправили в обычной варианте как его воспринимает PHP
-        // чтобы автоматически очищалось поле инпута
-        for (let i = 0; i < input.length; i++) {
-            input[i].value = ''; // возмем каждый инпут тот что есть в форме, у каждого инпута возмем value и превратим в пустую строку
-        }
+            let clearInput = () => { // чтобы автоматически очищалось поле инпута
+                for (let i = 0; i < input.length; i++) {
+                    input[i].value = ''; // возмем каждый инпут тот что есть в форме, у каждого инпута возмем value и превратим в пустую строку
+                }
+            };
+
+            postData(formData)
+                .then( ()=> statusMessage.innerHTML = message.loading)
+                .then( ()=> statusMessage.innerHTML = message.success)
+                .catch( ()=> statusMessage.innerHTML = message.failure)
+                .then(clearInput)
+ 
+        // }); // для 1 варианта вызова
     };
 
+    // можно вызвать так(1 вариант):
+    // sendForm(form);
+    // sendForm(formBottom);
 
-    // надо вешать НА ФОРМУ,  НЕ НА КНОПКУ.  Следим чтобы форма отправлялась
+    // или так:
+    // // надо вешать НА ФОРМУ,  НЕ НА КНОПКУ.  Следим чтобы форма отправлялась
     document.body.addEventListener('submit', (event) => {  // submit - всегда отправка  СРАБАТЫВАЕТ ТОЛЬКО НА ФОРМАХ
         let target = event.target; // event. где произошло событие
         event.preventDefault(); // чтобы не перезагружалась страница отменим стандартное поведение
@@ -230,9 +232,6 @@ window.addEventListener('DOMContentLoaded', () => {
         // console.log(target);
     });
 
-    ///////////////////////////////////////////
-    
-    ////// КОНТАКТНАЯ ФОРМА
 
 
 });
