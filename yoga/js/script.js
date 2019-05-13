@@ -233,5 +233,13 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
 
+    
+    // валидация input в поле телефона
+    document.body.addEventListener('input', e => {
+        if (e.target.getAttribute('type') === 'tel') {
+            e.target.value = '+' + e.target.value.replace(/[^\d]/g, '').slice(0, 11);
+            if (e.target.value.length == 1) e.target.value = '';
+        }
+    });
 
 });
