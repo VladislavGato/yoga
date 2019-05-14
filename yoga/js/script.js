@@ -242,4 +242,178 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
+    //////////////////////////////////////////////////////////////
+
+    ///////    СЛАЙДЕР      Slider
+
+
+    //переменная которая отвечает за то, какой слайд показывается
+    let slideIndex = 1,
+
+    // сами слайды. получаем все слайды
+        slides = document.querySelectorAll('.slider-item'),
+    // элементы навигации, стрелочки ВПЕРЕД и НАЗАД
+        prev = document.querySelector('.prev'),
+        next = document.querySelector('.next'),
+    // взаимодействие с нашими точками. получаем обертку точек и сами точки
+        dotsWrap = document.querySelector('.slider-dots'),
+        dots = document.querySelectorAll('.dot');
+    //
+
+    let showSlides = (n) => {
+   
+        if (n > slides.length) {
+            slideIndex = 1;
+        }
+
+        if (n < 1) {
+            slideIndex = slides.length;
+        }
+ 
+        slides.forEach((item) => item.style.display = 'none');     
+        // //     ! старый аналогичный способ !
+        // for (let i = 0; i < slides.length; i++) {
+        //     slides[i].style.display = 'none';
+        // }
+
+
+        // удаляем класс dot-active
+        dots.forEach((item) => item.classList.remove('dot-active')); 
+
+        // покажем тот слайд который нам нужен
+
+        slides[slideIndex - 1].style.display = 'block';
+
+        // добавляем класс dot-active
+        dots[slideIndex - 1].classList.add('dot-active');
+    };
+
+    showSlides(slideIndex); 
+
+    // функция которая увеличивает наш параметр slideIndex
+    let plusSlides = (n) => {
+        showSlides(slideIndex += n);
+    }
+
+    // функция которая определяет текущий слайд и устанавливает его
+    let currentSlide = (n) => {
+        showSlides(slideIndex = n);
+    }
+
+    // кнопки стрелочка назад и стрелочка вперед
+    prev.addEventListener('click', () => {
+        plusSlides(-1);
+    });
+    next.addEventListener('click', () => {
+        plusSlides(1);
+    });
+
+    // реализуем точки
+    dotsWrap.addEventListener('click', (event) => {
+
+        for (let i = 0; i < dots.length + 1; i++) {
+
+            if (event.target.classList.contains('dot') && event.target == dots[i - 1]) {
+                currentSlide(i);
+            }
+        }      
+    });
+
+    /////////////////////////////////////////////////////////////////////
+
+    // Calc      КАЛЬКУЛЯТОР
+
+    // получим два инпута; базу на которой будут отдыхать;
+    let persons = document.querySelectorAll('.counter-block-input')[0],
+        restDays = document.querySelectorAll('.counter-block-input')[1],
+        place = document.getElementById('select'),
+
+        totalValue = document.getElementById('total'), //общую сумму поездки
+        
+        personsSum = 0, // количество людей
+        daysSum = 0, // на сколько дней
+        total = 0; // итоговое значение общей суммы
+
+    // запишем 0 в общую сумму на странице
+    totalValue.innerHTML = 0;
+    // totalValue.textContent = 0; // можно и так
+    
+    // отслеживаем то что ввел пользователь
+    // можно использовать input(ввод) или change(изменение)
+
+    // НЕЛЬЗЯ ИСПОЛЬЗОВАТЬ СТРЕЛОЧНЫЕ ФУНУКЦИИ, потому что 
+    //  используем контекст вызова this 
+    // persons.addEventListener('input', function() {
+    //     // в переменную personsSum запишем то что ввели в input persons
+    //     // при помощи this мы можем получить тот элемент с которым
+    //     //  мы общаемся, на котором протсходит событие change
+    //     personsSum = +this.value; // значение persons
+    //     total = (daysSum + personsSum)*4000;
+    //     // если другое поле пустое, то мы ничего показывать не будем
+    //     if(restDays.value == '') {
+    //         totalValue.innerHTML = 0;
+    //     } else {
+    //         totalValue.innerHTML = total;
+    //     }
+    // });
+
+    // restDays.addEventListener('input', function() {
+    //     // в переменную personsSum запишем то что ввели в input persons
+    //     // при помощи this мы можем получить тот элемент с которым
+    //     //  мы общаемся, на котором протсходит событие change
+    //     daysSum = +this.value; // значение persons
+    //     total = (daysSum + personsSum)*4000;
+    //     // если другое поле пустое, то мы ничего показывать не будем
+    //     if(persons.value == '') {
+    //         totalValue.innerHTML = 0;
+    //     } else {
+    //         totalValue.innerHTML = total;
+    //     }
+    // });
+
+    // срабатывает только когда оба инпута заполненны
+    // place.addEventListener('change', function() {
+    //     if (restDays.value == '' || persons.value == '' || restDays.value == '0' || persons.value == '0') {
+    //         totalValue.innerHTML = 0;
+    //     } else {
+    //         let a = total;
+    //         // обращаемся к тому элементу options который мы сейчас задействуем
+    //         // через [] обращаемся к тому элементу который был выбран
+    //         // и получим его value 
+    //         totalValue.innerHTML = a * this.options[this.selectedIndex].value; 
+    //     }
+    // });
+
+    // document.body.addEventListener('input', e => {
+    //     if (e.target.getAttribute('type') === 'number') {
+    //         e.target.value = e.target.value.replace(/[^\d]/g, '');
+    //         if (e.target.value.length == 0) e.target.value = '';
+    //     }
+    // });
+
+    document.body.addEventListener('input', e => {
+        if (e.target.getAttribute('type') === 'number') {
+            e.target.value = e.target.value.replace(/[^\d]/g, '');
+            if(e.target == persons || e.target == restDays) {
+
+                personsSum = +e.target.value; // значение persons
+                total = (daysSum + personsSum)*4000;
+                // если другое поле пустое, то мы ничего показывать не будем
+                if(restDays.value == '' || restDays.value == '' || restDays.value == '0' || persons.value == '0') {
+                    totalValue.innerHTML = 0;
+                } else {
+                    totalValue.innerHTML = total;
+                }
+
+            }
+            if (e.target.value.length == 0) e.target.value = '';            
+        }
+        if (e.target == place) {
+            let a = total;
+            totalValue.innerHTML = a * e.target.options[e.target.selectedIndex].value;
+        }
+    });
+
+
 });
