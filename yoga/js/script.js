@@ -234,13 +234,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     
-    // валидация input в поле телефона
-    document.body.addEventListener('input', e => {
-        if (e.target.getAttribute('type') === 'tel') {
-            e.target.value = '+' + e.target.value.replace(/[^\d]/g, '').slice(0, 11);
-            if (e.target.value.length == 1) e.target.value = '';
-        }
-    });
+    // // валидация input в поле телефона
+    // document.body.addEventListener('input', e => {
+    //     if (e.target.getAttribute('type') === 'tel') {
+    //         e.target.value = '+' + e.target.value.replace(/[^\d]/g, '').slice(0, 11);
+    //         if (e.target.value.length == 1) e.target.value = '';
+    //     }
+    // });
 
 
     //////////////////////////////////////////////////////////////
@@ -391,29 +391,51 @@ window.addEventListener('DOMContentLoaded', () => {
     //         if (e.target.value.length == 0) e.target.value = '';
     //     }
     // });
+    
+    
 
+    //валидация input в поле телефона и калькулятор
     document.body.addEventListener('input', e => {
-        if (e.target.getAttribute('type') === 'number') {
-            e.target.value = e.target.value.replace(/[^\d]/g, '');
-            if(e.target == persons || e.target == restDays) {
-
-                personsSum = +e.target.value; // значение persons
-                total = (daysSum + personsSum)*4000;
-                // если другое поле пустое, то мы ничего показывать не будем
-                if(restDays.value == '' || restDays.value == '' || restDays.value == '0' || persons.value == '0') {
-                    totalValue.innerHTML = 0;
-                } else {
-                    totalValue.innerHTML = total;
-                }
-
-            }
-            if (e.target.value.length == 0) e.target.value = '';            
+        if (e.target.getAttribute('type') === 'tel') {
+            e.target.value = '+' + e.target.value.replace(/[^\d]/g, '').slice(0, 11);
+            if (e.target.value.length == 1) e.target.value = '';
         }
-        if (e.target == place) {
+
+        if (e.target.classList == 'counter-block-input') {
+            e.target.value = e.target.value.replace(/(^[0]{1})/, '');
+        }
+
+        personsSum = +persons.value;
+        daysSum = +restDays.value;
+
+        total = (daysSum + personsSum) * 4000;
+
+        if (restDays.value === '' || persons.value === '') {
+            totalValue.innerHTML = 0;
+        } else {
             let a = total;
-            totalValue.innerHTML = a * e.target.options[e.target.selectedIndex].value;
+            totalValue.innerHTML = a * place.options[place.selectedIndex].value;
         }
     });
 
+    
+
+
+
+ 
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
