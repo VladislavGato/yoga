@@ -9,14 +9,12 @@ $(document).ready(function() {
 	// вешаем обработчик событий на кнопки (Выбрать тур), (Получить консультацию), (расписания туров)
 	// появляется модальное окно и overlay
 	$('.main_btna, .main_btn, .col-sm-7 a:eq(1)').on('click', function() {
-		console.log(111111111111);
 		$('.modal').slideDown();
 		$('.overlay').fadeIn();
 	});
 
 	// закрывает модальное окно и overlay при нажатии на крестик или overlay
 	$('.modal button:eq(0), .overlay').on('click', function() {
-		console.log(111111111111);
 		$('.modal').slideUp();
 		$('.overlay').fadeOut();
 	});
